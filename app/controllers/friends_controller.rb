@@ -2,7 +2,7 @@ class FriendsController < ApplicationController
     before_action :find_friend, only: [:show, :update, :destroy]
 
     def index
-        @friend = friend.all
+        @friend = Friend.all
         # include the friending spots the friend belongs to
         render :json => @friend, status: :ok
     end
@@ -10,7 +10,7 @@ class FriendsController < ApplicationController
     def create
         @friend = Friend.create(friend_params)
         if @friend.persisted?
-            render :json => @friend, status: :created
+            render :json => @friend, include: [:target, :requestor], status: :created
         else
             render :json => { errors: @friend.errors }
         end

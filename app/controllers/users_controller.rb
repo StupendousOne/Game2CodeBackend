@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
-    before_action :find_user, only: [:show, :update, :destroy]
+    before_action :find_user, only: [:show, :update, :destroy, :stats]
 
     def index
         @user = User.all
-        render :json => @user, include: [:scores,:current_friends,:current_follows,:completed_challenges]
+        render :json => @user, include: [:scores,:friends,:pending_friends,:current_friends,:current_follows,:completed_challenges]
     end
 
     def create
@@ -36,6 +36,20 @@ class UsersController < ApplicationController
         # end
     end
 
+    def staylogged
+        find_user_by_username
+        render :json => { user: @user.as_json(include: [:scores,:friends,:pending_friends,:current_friends,:current_follows,:completed_challenges])}, :status => :ok
+    end
+
+    def stats
+        userStats = {}
+        userStats[:highest_line_score] = @user.highest_line_score
+        userStats[:highest_speed_score] = @user.highest_speed_score
+        userStats[:highest_total_score] = @user.highest_total_score
+
+        render :json => userStats, :status => :ok
+    end
+
     private
     def user_params
         params.require(:user).permit(:username, :img, :password)
@@ -47,5 +61,9 @@ class UsersController < ApplicationController
 
     def find_user
         @user = User.find_by(id: params[:id])
+    end
+
+    def find_user_by_username
+        @user = User.find_by(username: params[:username])
     end
 end

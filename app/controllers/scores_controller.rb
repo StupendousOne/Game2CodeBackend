@@ -2,7 +2,7 @@ class ScoresController < ApplicationController
     before_action :find_score, only: [:show, :update, :destroy]
 
     def index
-        @score = score.all
+        @score = Score.all
         # include the scoreing spots the score belongs to
         render :json => @score, include: [:user,:challenge], status: :ok
     end
@@ -40,13 +40,29 @@ class ScoresController < ApplicationController
         end
     end
 
+    def totals
+        scores = []
+        User.all.each{ |u|
+            line = 0
+            speed = 0
+            u.scores.each {|s| 
+                line += s.line_score
+                speed += s.speed_score
+            }
+            total = line + speed
+
+            scores.push({username: u.username, line: line, speed: speed, total: total})
+        }
+        render :json => scores
+    end
+
     private
     def score_params
-        params.require(:score).permit(:line_score,:speed_score,:user_id,:challenge_id, :completed)
+        params.require(:score).permit(:line_score, :speed_score, :user_id, :challenge_id, :completed)
     end
 
     def find_score
-        @score = score.find_by(id: params[:id])
+        @score = Score.find_by(id: params[:id])
     end
 
 end

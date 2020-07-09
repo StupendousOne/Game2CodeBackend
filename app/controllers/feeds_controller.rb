@@ -1,16 +1,16 @@
-class feedController < ApplicationController
+class FeedsController < ApplicationController
     before_action :find_feed, only: [:show, :update, :destroy]
 
     def index
-        @feed = feed.all
+        @feed = Feed.all
         # include the feeding spots the feed belongs to
-        render :json => @feed, status: :ok
+        render :json => @feed, include: :user, status: :ok
     end
 
     def create
         @feed = Feed.create(feed_params)
         if @feed.persisted?
-            render :json => @feed, status: :created
+            render :json => @feed, include: :user, status: :created
         else
             render :json => { errors: @feed.errors }
         end

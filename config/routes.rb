@@ -10,4 +10,7 @@ Rails.application.routes.draw do
   post '/login', to: 'sessions#create'
   post '/signup', to: 'users#create'
   patch '/friend', to: 'user_friends#update'
+  get '/user/:username', to: 'users#staylogged'
+  get '/totals', to: 'scores#totals'
+  get '/stats/:id', to: 'users#stats'
 end

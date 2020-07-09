@@ -2,7 +2,7 @@ class FollowsController < ApplicationController
     before_action :find_follow, only: [:show, :update, :destroy]
 
     def index
-        @follow = follow.all
+        @follow = Follow.all
         # include the following spots the follow belongs to
         render :json => @follow, status: :ok
     end
@@ -10,7 +10,7 @@ class FollowsController < ApplicationController
     def create
         @follow = Follow.create(follow_params)
         if @follow.persisted?
-            render :json => @follow, status: :created
+            render :json => @follow, include: [:target, :follower], status: :created
         else
             render :json => { errors: @follow.errors }
         end

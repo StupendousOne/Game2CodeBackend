@@ -2,15 +2,15 @@ class ChallengesController < ApplicationController
     before_action :find_challenge, only: [:show, :update, :destroy]
 
     def index
-        @challenge = challenge.all
+        @challenge = Challenge.all
         # include the challengeing spots the challenge belongs to
-        render :json => @challenge, status: :ok
+        render :json => @challenge, include: :scores, status: :ok
     end
 
     def create
         @challenge = Challenge.create(challenge_params)
         if @challenge.persisted?
-            render :json => @challenge, status: :created
+            render :json => @challenge, include: :scores, status: :created
         else
             render :json => { errors: @challenge.errors }
         end
